@@ -1,2 +1,1 @@
-# senseye-pyueye
-Copy of pyueye with small fixes.
+pyueye senseye version 0.1.0
