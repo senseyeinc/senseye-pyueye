@@ -62,19 +62,19 @@ memmove = ctypes.memmove
 
 def new_mem_p(size):
     _size = size
-    
+
     if isinstance(size, ctypes._SimpleCData):
         _size = size.value
-    
+
     return ctypes.cast(ctypes.create_string_buffer(_size), c_mem_p)
 
 
 def sizeof(obj_or_type):
     _obj_or_type = obj_or_type
-    
+
     if isinstance(obj_or_type, _CtypesEnum):
         _obj_or_type = ctypes.c_uint(obj_or_type.value)
-        
+
     return ctypes.sizeof(_obj_or_type)
 
 
@@ -117,17 +117,17 @@ def _value_cast(from_obj, to_type):
 
 _bool = bool
 _int = int
-_float = float    
+_float = float
 
 if sys.version_info > (3,):
     _long = _int
 else:
     _long = long
-    
-    
+
+
 class _IntEnum(_long, enum.Enum):
     """ """
-    
+
     pass
 
 
@@ -157,7 +157,7 @@ class _PointerMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -165,7 +165,7 @@ class _PointerMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 == value2
 
     def __ne__(self, other):
@@ -173,7 +173,7 @@ class _PointerMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -181,7 +181,7 @@ class _PointerMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 != value2
 
 
@@ -196,10 +196,10 @@ class _StructureAndUnionMixin(object):
         """
         _map = ctypes.Structure.__getattribute__(self, '_map')
         value = ctypes.Structure.__getattribute__(self, name)
-        
+
         if name in _map:
             EnumClass = _map[name]
-        
+
             if isinstance(value, ctypes.Array):
                 return [EnumClass(x) for x in value]
             else:
@@ -212,16 +212,16 @@ class _StructureAndUnionMixin(object):
         """
         result = []
         result.append("struct {0} {{".format(self.__class__.__name__))
-        
+
         for field in self._fields_:
             attr_name, attr_type = field
-        
+
             if attr_name in self._map:
                 attr_type = self._map[attr_name]
-        
+
             value = getattr(self, attr_name)
             result.append("    {0} [{1}] = {2!r};".format(attr_name, attr_type.__name__, value))
-        
+
         result.append("};")
         return '\n'.join(result)
 
@@ -232,14 +232,14 @@ class _StructureAndUnionMixin(object):
         """
         for field in self._fields_:
             attr_name = field[0]
-        
+
             a = getattr(self, attr_name)
-        
+
             try:
                 b = getattr(other, attr_name)
             except AttributeError:
                 return False
-        
+
             if isinstance(a, ctypes.Array) and a[:] != b[:]:
                 return False
             elif isinstance(a, ctypes._Pointer):
@@ -247,17 +247,17 @@ class _StructureAndUnionMixin(object):
                     a_value = a.contents
                 except ValueError:
                     a_value = None
-        
+
                 try:
                     b_value = b.contents
                 except ValueError:
                     b_value = None
-        
+
                 if a_value != b_value:
                     return False
             elif a != b:
                 return False
-        
+
         return True
 
     def __ne__(self, other):
@@ -265,14 +265,14 @@ class _StructureAndUnionMixin(object):
         """
         for field in self._fields_:
             attr_name = field[0]
-        
+
             a = getattr(self, attr_name)
-        
+
             try:
                 b = getattr(other, attr_name)
             except AttributeError:
                 return True
-        
+
             if isinstance(a, ctypes.Array) and a[:] != b[:]:
                 return True
             elif isinstance(a, ctypes._Pointer):
@@ -280,17 +280,17 @@ class _StructureAndUnionMixin(object):
                     a_value = a.contents
                 except ValueError:
                     a_value = None
-        
+
                 try:
                     b_value = b.contents
                 except ValueError:
                     b_value = None
-        
+
                 if a_value != b_value:
                     return True
             elif a != b:
                 return True
-        
+
         return False
 
 
@@ -315,7 +315,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -323,7 +323,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 == value2
 
     def __ne__(self, other):
@@ -331,7 +331,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -339,7 +339,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 != value2
 
     def __lt__(self, other):
@@ -347,7 +347,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -355,7 +355,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 < value2
 
     def __le__(self, other):
@@ -363,7 +363,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -371,7 +371,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 <= value2
 
     def __gt__(self, other):
@@ -379,7 +379,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -387,7 +387,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 > value2
 
     def __ge__(self, other):
@@ -395,7 +395,7 @@ class _CompareMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -403,7 +403,7 @@ class _CompareMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 >= value2
 
     def __bool__(self):
@@ -442,7 +442,7 @@ class _ConvertMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -450,12 +450,12 @@ class _ConvertMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         if isinstance(value1, _float):
             return value1, _float(value2)
         elif isinstance(value2, _float):
             return _float(value1), value2
-        
+
         return _int(value1), _int(value2)
 
 
@@ -499,7 +499,7 @@ class _NumberMixin(object):
         """
         summand1 = self.value
         summand2 = 0
-        
+
         try:
             summand2 = other.value
         except AttributeError:
@@ -507,7 +507,7 @@ class _NumberMixin(object):
                 summand2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return summand1 + summand2
 
     def __radd__(self, other):
@@ -520,7 +520,7 @@ class _NumberMixin(object):
         """
         minuend = self.value
         subtrahend = 0
-        
+
         try:
             subtrahend = other.value
         except AttributeError:
@@ -528,7 +528,7 @@ class _NumberMixin(object):
                 subtrahend = other
             except TypeError:
                 return NotImplemented
-        
+
         return minuend - subtrahend
 
     def __rsub__(self, other):
@@ -536,7 +536,7 @@ class _NumberMixin(object):
         """
         minuend = 0
         subtrahend = self.value
-        
+
         try:
             minuend = other.value
         except AttributeError:
@@ -544,7 +544,7 @@ class _NumberMixin(object):
                 minuend = other
             except TypeError:
                 return NotImplemented
-        
+
         return minuend - subtrahend
 
     def __mul__(self, other):
@@ -552,7 +552,7 @@ class _NumberMixin(object):
         """
         multiplikand = self.value
         multiplikator = 0
-        
+
         try:
             multiplikator = other.value
         except AttributeError:
@@ -560,7 +560,7 @@ class _NumberMixin(object):
                 multiplikator = other
             except TypeError:
                 return NotImplemented
-        
+
         return multiplikand * multiplikator
 
     def __rmul__(self, other):
@@ -573,7 +573,7 @@ class _NumberMixin(object):
         """
         dividend = self.value
         divisor = 0
-        
+
         try:
             divisor = other.value
         except AttributeError:
@@ -581,7 +581,7 @@ class _NumberMixin(object):
                 divisor = other
             except TypeError:
                 return NotImplemented
-        
+
         return dividend / divisor
 
     def __rtruediv__(self, other):
@@ -589,7 +589,7 @@ class _NumberMixin(object):
         """
         dividend = 0
         divisor = self.value
-        
+
         try:
             dividend = other.value
         except AttributeError:
@@ -597,7 +597,7 @@ class _NumberMixin(object):
                 dividend = other
             except TypeError:
                 return NotImplemented
-        
+
         return dividend / divisor
 
     def __floordiv__(self, other):
@@ -605,7 +605,7 @@ class _NumberMixin(object):
         """
         dividend = self.value
         divisor = 0
-        
+
         try:
             divisor = other.value
         except AttributeError:
@@ -613,7 +613,7 @@ class _NumberMixin(object):
                 divisor = other
             except TypeError:
                 return NotImplemented
-        
+
         return dividend // divisor
 
     def __rfloordiv__(self, other):
@@ -621,7 +621,7 @@ class _NumberMixin(object):
         """
         dividend = 0
         divisor = self.value
-        
+
         try:
             dividend = other.value
         except AttributeError:
@@ -629,7 +629,7 @@ class _NumberMixin(object):
                 dividend = other
             except TypeError:
                 return NotImplemented
-        
+
         return dividend // divisor
 
     def __and__(self, other):
@@ -637,7 +637,7 @@ class _NumberMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -645,7 +645,7 @@ class _NumberMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 & value2
 
     def __rand__(self, other):
@@ -658,7 +658,7 @@ class _NumberMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -666,7 +666,7 @@ class _NumberMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 | value2
 
     def __ror__(self, other):
@@ -679,7 +679,7 @@ class _NumberMixin(object):
         """
         value1 = self.value
         value2 = 0
-        
+
         try:
             value2 = other.value
         except AttributeError:
@@ -687,7 +687,7 @@ class _NumberMixin(object):
                 value2 = other
             except TypeError:
                 return NotImplemented
-        
+
         return value1 ^ value2
 
     def __xror__(self, other):
@@ -699,7 +699,7 @@ class _NumberMixin(object):
         """
         """
         summand = 0
-        
+
         try:
             summand = other.value
         except AttributeError:
@@ -707,16 +707,16 @@ class _NumberMixin(object):
                 summand = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value += summand
-        
+
         return self
 
     def __isub__(self, other):
         """
         """
         subtrahend = 0
-        
+
         try:
             subtrahend = other.value
         except AttributeError:
@@ -724,16 +724,16 @@ class _NumberMixin(object):
                 subtrahend = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value -= subtrahend
-        
+
         return self
 
     def __imul__(self, other):
         """
         """
         multiplikator = 0
-        
+
         try:
             multiplikator = other.value
         except AttributeError:
@@ -741,16 +741,16 @@ class _NumberMixin(object):
                 multiplikator = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value *= multiplikator
-        
+
         return self
 
     def __itruediv__(self, other):
         """
         """
         divisor = 0
-        
+
         try:
             divisor = other.value
         except AttributeError:
@@ -758,19 +758,19 @@ class _NumberMixin(object):
                 divisor = other
             except TypeError:
                 return NotImplemented
-        
+
         try:
             self.value /= divisor
         except TypeError:
             self.value //= divisor
-        
+
         return self
 
     def __ifloordiv__(self, other):
         """
         """
         divisor = 0
-        
+
         try:
             divisor = other.value
         except AttributeError:
@@ -778,16 +778,16 @@ class _NumberMixin(object):
                 divisor = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value //= divisor
-        
+
         return self
 
     def __iand__(self, other):
         """
         """
         value = 0
-        
+
         try:
             value = other.value
         except AttributeError:
@@ -795,16 +795,16 @@ class _NumberMixin(object):
                 value = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value &= value
-        
+
         return self
 
     def __ior__(self, other):
         """
         """
         value = 0
-        
+
         try:
             value = other.value
         except AttributeError:
@@ -812,16 +812,16 @@ class _NumberMixin(object):
                 value = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value |= value
-        
+
         return self
 
     def __ixor__(self, other):
         """
         """
         value = 0
-        
+
         try:
             value = other.value
         except AttributeError:
@@ -829,9 +829,9 @@ class _NumberMixin(object):
                 value = other
             except TypeError:
                 return NotImplemented
-        
+
         self.value ^= value
-        
+
         return self
 
 
@@ -1334,6 +1334,7 @@ class FOCUS_CAPABILITY_FLAGS(_CtypesEnum):
     FOC_CAP_SET_AUTOFOCUS_RANGE = 8
     FOC_CAP_AUTOFOCUS_FDT_AOI = 16
     FOC_CAP_AUTOFOCUS_ZONE = 32
+    FOC_CAP_AUTOFOCUS_LIMIT = 32
 
 
 FOC_CAP_INVALID = FOCUS_CAPABILITY_FLAGS.FOC_CAP_INVALID
@@ -1343,6 +1344,7 @@ FOC_CAP_GET_DISTANCE = FOCUS_CAPABILITY_FLAGS.FOC_CAP_GET_DISTANCE
 FOC_CAP_SET_AUTOFOCUS_RANGE = FOCUS_CAPABILITY_FLAGS.FOC_CAP_SET_AUTOFOCUS_RANGE
 FOC_CAP_AUTOFOCUS_FDT_AOI = FOCUS_CAPABILITY_FLAGS.FOC_CAP_AUTOFOCUS_FDT_AOI
 FOC_CAP_AUTOFOCUS_ZONE = FOCUS_CAPABILITY_FLAGS.FOC_CAP_AUTOFOCUS_ZONE
+FOC_CAP_AUTOFOCUS_LIMIT = FOCUS_CAPABILITY_FLAGS.FOC_CAP_AUTOFOCUS_LIMIT
 
 
 class FOCUS_RANGE(_CtypesEnum):
@@ -1354,7 +1356,6 @@ class FOCUS_RANGE(_CtypesEnum):
 FOC_RANGE_NORMAL = FOCUS_RANGE.FOC_RANGE_NORMAL
 FOC_RANGE_ALLRANGE = FOCUS_RANGE.FOC_RANGE_ALLRANGE
 FOC_RANGE_MACRO = FOCUS_RANGE.FOC_RANGE_MACRO
-
 
 class FOCUS_STATUS(_CtypesEnum):
     FOC_STATUS_UNDEFINED = 0
@@ -1445,6 +1446,7 @@ class FOCUS_CMD(_CtypesEnum):
     FOC_CMD_GET_AUTOFOCUS_ZONE_AOI_PRESET_DEFAULT = 32
     FOC_CMD_GET_AUTOFOCUS_ZONE_ARBITRARY_AOI_SUPPORTED = 33
     FOC_CMD_SET_MANUAL_FOCUS_RELATIVE = 34
+    FOC_CMD_SET_AUTOFOCUS_LIMIT = 49
 
 
 FOC_CMD_GET_CAPABILITIES = FOCUS_CMD.FOC_CMD_GET_CAPABILITIES
@@ -1482,6 +1484,7 @@ FOC_CMD_GET_AUTOFOCUS_ZONE_AOI_PRESET = FOCUS_CMD.FOC_CMD_GET_AUTOFOCUS_ZONE_AOI
 FOC_CMD_GET_AUTOFOCUS_ZONE_AOI_PRESET_DEFAULT = FOCUS_CMD.FOC_CMD_GET_AUTOFOCUS_ZONE_AOI_PRESET_DEFAULT
 FOC_CMD_GET_AUTOFOCUS_ZONE_ARBITRARY_AOI_SUPPORTED = FOCUS_CMD.FOC_CMD_GET_AUTOFOCUS_ZONE_ARBITRARY_AOI_SUPPORTED
 FOC_CMD_SET_MANUAL_FOCUS_RELATIVE = FOCUS_CMD.FOC_CMD_SET_MANUAL_FOCUS_RELATIVE
+FOC_CMD_SET_AUTOFOCUS_LIMIT = FOCUS_CMD.FOC_CMD_SET_AUTOFOCUS_LIMIT
 
 
 class IMGSTAB_CAPABILITY_FLAGS(_CtypesEnum):
@@ -3497,6 +3500,14 @@ class IS_RECT(_Structure):
         ("s32Y", c_int),
         ("s32Width", c_int),
         ("s32Height", c_int),
+    ]
+
+
+class AUTOFOCUS_LIMIT(_Structure):
+    _pack_ = 8
+    _fields_ = [
+        ("sMin", c_int),
+        ("sMax", c_int),
     ]
 
 
@@ -8599,7 +8610,3 @@ def is_PowerDelivery(hCam, nCommand, pParam, cbSizeOfParams):
     ret = _is_PowerDelivery(_hCam, _nCommand, _pParam, _cbSizeOfParams)
 
     return ret
-
-
-
-
