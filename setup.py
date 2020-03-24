@@ -44,8 +44,8 @@ from setuptools import setup
 package_name = 'pyueye'
 
 setup(
-    name                = package_name,
-    version             = '0.1.0',
+    name                = 'senseye-pyueye',
+    version             = '0.2.0',
     description         = package_name + ' - Python bindings for uEye API.',
     license             = '3-Clause BSD License',
     author              = 'IDS Imaging Development Systems GmbH',
